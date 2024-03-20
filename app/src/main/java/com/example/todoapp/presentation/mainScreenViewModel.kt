@@ -1,4 +1,4 @@
-package com.example.todoapp.viewmodel
+package com.example.todoapp.presentation
 
 import android.app.Application
 import android.util.Log
@@ -6,20 +6,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.todoapp.database.Todo
-import com.example.todoapp.database.TodoDB
-import com.example.todoapp.database.TodoRepository
+
+import com.example.todoapp.di.DBContainer
+import com.example.todoapp.domain.model.Todo
+import com.example.todoapp.domain.repository.TodoRepository
+import com.example.todoapp.domain.repository.TodoRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class todoViewModel(application: Application): ViewModel(){
-    private val repository: TodoRepository
+class todoViewModel(application: Application,private val container: DBContainer): ViewModel(){
     var allTodo : LiveData<List<Todo>>
-
+    private val repository: TodoRepository
     init {
-        val dao = TodoDB.getDatabase(application).getTodoDao()
-        repository = TodoRepository(dao)
-        allTodo = repository.allTodos
+        val dao = container.getDatabase(application)
+        repository = container.provideTodoRepository(dao)
+        allTodo = repository.getAllTodos()
     }
 
     fun insertTodo(todo: Todo) = viewModelScope.launch(Dispatchers.IO){
@@ -38,9 +39,9 @@ class todoViewModel(application: Application): ViewModel(){
 
 
 
-class StdVMFactory(val app: Application): ViewModelProvider.Factory{
+class StdVMFactory(val app: Application, val container: DBContainer): ViewModelProvider.Factory{
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return todoViewModel(app) as T
+        return todoViewModel(app, container) as T
     }
 }

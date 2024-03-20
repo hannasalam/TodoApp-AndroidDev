@@ -1,10 +1,8 @@
-package com.example.todoapp.database
+package com.example.todoapp.domain.model
 
-import android.icu.text.CaseMap.Title
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-
 
 @Entity(tableName = "todo_table")
 data class Todo(

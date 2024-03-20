@@ -1,16 +1,12 @@
-package com.example.todoapp.database
+package com.example.todoapp.di
 
 import android.content.Context
-import androidx.room.Database
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import kotlin.concurrent.Volatile
+import com.example.todoapp.data.local.TodoDB
+import com.example.todoapp.domain.repository.TodoRepository
+import com.example.todoapp.domain.repository.TodoRepositoryImpl
 
-@Database(entities = [Todo::class], version = 1)
-abstract class TodoDB: RoomDatabase(){
-    abstract fun getTodoDao(): TodoDao
-    companion object{
-
+class DBContainer {
         @Volatile
         private var INSTANCE: TodoDB? = null
         fun getDatabase(context: Context): TodoDB {
@@ -18,7 +14,7 @@ abstract class TodoDB: RoomDatabase(){
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     TodoDB::class.java,
-                    "todo_table"
+                    TodoDB.DB_NAME
                 ).build()
 
                 INSTANCE = instance
@@ -26,5 +22,7 @@ abstract class TodoDB: RoomDatabase(){
             }
         }
 
-    }
+        fun provideTodoRepository(database: TodoDB): TodoRepository = TodoRepositoryImpl(
+            database.getTodoDao()
+        )
 }

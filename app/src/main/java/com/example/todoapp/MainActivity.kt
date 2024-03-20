@@ -5,14 +5,12 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -33,7 +31,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
-import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DismissDirection
@@ -45,8 +42,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.SnackbarResult.*
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
@@ -58,19 +53,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import com.example.todoapp.database.Todo
-import com.example.todoapp.ui.theme.TodoAppTheme
-import com.example.todoapp.viewmodel.StdVMFactory
-import com.example.todoapp.viewmodel.todoViewModel
+import com.example.todoapp.di.DBInjector
+import com.example.todoapp.domain.model.Todo
+import com.example.todoapp.presentation.ui.theme.TodoAppTheme
+import com.example.todoapp.presentation.StdVMFactory
+import com.example.todoapp.presentation.todoViewModel
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -104,10 +98,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val dbContainer = DBInjector.dbContainer
                     val owner = LocalViewModelStoreOwner.current!!
                     vModel = ViewModelProvider(
                         owner,
-                        StdVMFactory(LocalContext.current.applicationContext as Application)
+                        StdVMFactory(LocalContext.current.applicationContext as Application, dbContainer)
                     )[todoViewModel::class.java]
 
                     Greeting(vModel, this, resultLauncherForAdd, resultLauncherForUpdate)
@@ -121,7 +116,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Greeting(viewModel: todoViewModel, context: Context, resultLauncherForAdd: ActivityResultLauncher<Intent>,resultLauncherForUpdate: ActivityResultLauncher<Intent>, modifier: Modifier = Modifier) {
+fun Greeting(viewModel: todoViewModel, context: Context, resultLauncherForAdd: ActivityResultLauncher<Intent>, resultLauncherForUpdate: ActivityResultLauncher<Intent>, modifier: Modifier = Modifier) {
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var dismissState: DismissState? = null

@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.example.todoapp.database.Todo
 
 
 class AddScreen : AppCompatActivity() {
