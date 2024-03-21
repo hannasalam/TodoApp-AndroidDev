@@ -1,8 +1,7 @@
 package com.example.todoapp.domain.usecases
 
-import androidx.lifecycle.LiveData
 import com.example.todoapp.domain.model.Todo
-import com.example.todoapp.domain.repository.TodoRepositoryImpl
+import com.example.todoapp.data.local.TodoRepositoryImpl
 
 class GetTodoByIdUseCase(val repository: TodoRepositoryImpl
 ) {

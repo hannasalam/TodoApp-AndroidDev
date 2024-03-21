@@ -9,11 +9,8 @@ import androidx.lifecycle.viewModelScope
 
 import com.example.todoapp.di.DBContainer
 import com.example.todoapp.domain.model.Todo
-import com.example.todoapp.domain.repository.TodoRepository
-import com.example.todoapp.domain.repository.TodoRepositoryImpl
 import com.example.todoapp.domain.usecases.DeleteTodoUseCase
 import com.example.todoapp.domain.usecases.GetAllTodoUseCase
-import com.example.todoapp.domain.usecases.GetTodoByIdUseCase
 import com.example.todoapp.domain.usecases.InsertTodoUsecase
 import com.example.todoapp.domain.usecases.UpdateTodoUseCase
 import kotlinx.coroutines.Dispatchers

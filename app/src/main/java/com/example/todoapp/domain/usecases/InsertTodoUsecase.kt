@@ -1,6 +1,6 @@
 package com.example.todoapp.domain.usecases
 import com.example.todoapp.domain.model.Todo
-import com.example.todoapp.domain.repository.TodoRepositoryImpl
+import com.example.todoapp.data.local.TodoRepositoryImpl
 
 class InsertTodoUsecase (
     private val repository: TodoRepositoryImpl

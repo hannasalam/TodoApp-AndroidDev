@@ -1,10 +1,10 @@
-package com.example.todoapp.domain.repository
+package com.example.todoapp.data.local
 
 import androidx.lifecycle.LiveData
-import com.example.todoapp.data.local.TodoDao
 import com.example.todoapp.domain.model.Todo
+import com.example.todoapp.domain.repository.TodoRepository
 
-class TodoRepositoryImpl private constructor(private val todoDao: TodoDao):TodoRepository {
+class TodoRepositoryImpl private constructor(private val todoDao: TodoDao): TodoRepository {
 
     override fun getAllTodos(): LiveData<List<Todo>> {
         return todoDao.getAllTodos()
@@ -30,7 +30,7 @@ class TodoRepositoryImpl private constructor(private val todoDao: TodoDao):TodoR
 
     companion object{
         private var instance: TodoRepositoryImpl? = null
-        fun getInstance(todoDao: TodoDao):TodoRepositoryImpl{
+        fun getInstance(todoDao: TodoDao): TodoRepositoryImpl {
             if(instance == null)
                 instance = TodoRepositoryImpl(todoDao)
             return instance!!

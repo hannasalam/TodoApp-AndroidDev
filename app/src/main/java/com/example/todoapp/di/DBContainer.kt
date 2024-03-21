@@ -3,8 +3,7 @@ package com.example.todoapp.di
 import android.content.Context
 import androidx.room.Room
 import com.example.todoapp.data.local.TodoDB
-import com.example.todoapp.domain.repository.TodoRepository
-import com.example.todoapp.domain.repository.TodoRepositoryImpl
+import com.example.todoapp.data.local.TodoRepositoryImpl
 
 class DBContainer {
         @Volatile

@@ -1,7 +1,7 @@
 package com.example.todoapp.domain.usecases
 
 import com.example.todoapp.domain.model.Todo
-import com.example.todoapp.domain.repository.TodoRepositoryImpl
+import com.example.todoapp.data.local.TodoRepositoryImpl
 
 class DeleteTodoUseCase (
     private val repository: TodoRepositoryImpl
