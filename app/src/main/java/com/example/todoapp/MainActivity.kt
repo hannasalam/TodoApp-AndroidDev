@@ -70,23 +70,23 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
 
     private lateinit var vModel: todoViewModel
-    var resultLauncherForAdd = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data: Intent? = result.data
-
-            val title = data?.getStringExtra("title")!!
-            vModel.insertTodo(Todo( title = title))
-        }
-    }
-    var resultLauncherForUpdate = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data: Intent? = result.data
-            val title = data?.getStringExtra("title")!!
-            val id = data.getIntExtra("id", 0)
-            val isDone = data.getBooleanExtra("isDone", false)
-            vModel.updateTodo(Todo(id,title,isDone))
-        }
-    }
+//    var resultLauncherForAdd = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//        if (result.resultCode == Activity.RESULT_OK) {
+//            val data: Intent? = result.data
+//
+//            val title = data?.getStringExtra("title")!!
+//            vModel.insertTodo(Todo( title = title))
+//        }
+//    }
+//    var resultLauncherForUpdate = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//        if (result.resultCode == Activity.RESULT_OK) {
+//            val data: Intent? = result.data
+//            val title = data?.getStringExtra("title")!!
+//            val id = data.getIntExtra("id", 0)
+//            val isDone = data.getBooleanExtra("isDone", false)
+//            vModel.updateTodo(Todo(id,title,isDone))
+//        }
+//    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,7 +105,7 @@ class MainActivity : ComponentActivity() {
                         StdVMFactory(LocalContext.current.applicationContext as Application, dbContainer)
                     )[todoViewModel::class.java]
 
-                    Greeting(vModel, this, resultLauncherForAdd, resultLauncherForUpdate)
+                    Greeting(vModel, this)
                 }
             }
         }
@@ -116,7 +116,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun Greeting(viewModel: todoViewModel, context: Context, resultLauncherForAdd: ActivityResultLauncher<Intent>, resultLauncherForUpdate: ActivityResultLauncher<Intent>, modifier: Modifier = Modifier) {
+fun Greeting(viewModel: todoViewModel, context: Context, modifier: Modifier = Modifier) {
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     var dismissState: DismissState? = null
@@ -143,7 +143,7 @@ fun Greeting(viewModel: todoViewModel, context: Context, resultLauncherForAdd: A
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 val intent = Intent(context,AddScreen::class.java)
-                resultLauncherForAdd.launch(intent)
+                context.startActivity(intent)
             }) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
@@ -231,17 +231,15 @@ fun Greeting(viewModel: todoViewModel, context: Context, resultLauncherForAdd: A
                                             .clickable {
                                                 val intent = Intent(context, AddScreen::class.java)
                                                 intent.putExtra("id", todo.id)
-                                                intent.putExtra("title", todo.title)
-                                                intent.putExtra("isDone", todo.isDone)
-                                                resultLauncherForUpdate.launch(intent)
+                                                Log.d("Added intent", intent.getIntExtra("id",-1).toString())
+                                                context.startActivity(intent)
+
                                             }
                                     )
                                     IconButton(onClick = {
                                         val intent = Intent(context, AddScreen::class.java)
                                         intent.putExtra("id", todo.id)
-                                        intent.putExtra("title", todo.title)
-                                        intent.putExtra("isDone", todo.isDone)
-                                        resultLauncherForUpdate.launch(intent)
+                                        context.startActivity(intent)
                                     }) {
                                         Icon(
                                             imageVector = Icons.Default.Edit,

@@ -13,6 +13,8 @@ interface TodoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(todo: Todo)
 
+    @Query("SELECT * from todo_table where id = :id")
+    fun getById(id: Int):Todo?
     @Delete
     suspend fun delete(todo: Todo)
 

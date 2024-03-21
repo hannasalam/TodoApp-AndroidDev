@@ -15,14 +15,15 @@ class DBContainer {
                     context.applicationContext,
                     TodoDB::class.java,
                     TodoDB.DB_NAME
-                ).build()
+                ).allowMainThreadQueries().build()
 
                 INSTANCE = instance
                 instance
             }
         }
 
-        fun provideTodoRepository(database: TodoDB): TodoRepository = TodoRepositoryImpl(
+
+        fun provideTodoRepository(database: TodoDB): TodoRepositoryImpl = TodoRepositoryImpl.getInstance(
             database.getTodoDao()
         )
 }

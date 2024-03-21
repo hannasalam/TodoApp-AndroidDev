@@ -11,30 +11,35 @@ import com.example.todoapp.di.DBContainer
 import com.example.todoapp.domain.model.Todo
 import com.example.todoapp.domain.repository.TodoRepository
 import com.example.todoapp.domain.repository.TodoRepositoryImpl
+import com.example.todoapp.domain.usecases.DeleteTodoUseCase
+import com.example.todoapp.domain.usecases.GetAllTodoUseCase
+import com.example.todoapp.domain.usecases.GetTodoByIdUseCase
+import com.example.todoapp.domain.usecases.InsertTodoUsecase
+import com.example.todoapp.domain.usecases.UpdateTodoUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class todoViewModel(application: Application,private val container: DBContainer): ViewModel(){
-    var allTodo : LiveData<List<Todo>>
-    private val repository: TodoRepository
+class todoViewModel(getAllTodoUseCase: GetAllTodoUseCase, val updateTodoUseCase: UpdateTodoUseCase, val deleteTodoUseCase: DeleteTodoUseCase,val insertTodoUsecase: InsertTodoUsecase): ViewModel() {
+    var allTodo: LiveData<List<Todo>>
+
     init {
-        val dao = container.getDatabase(application)
-        repository = container.provideTodoRepository(dao)
-        allTodo = repository.getAllTodos()
+        allTodo = getAllTodoUseCase.execute()
     }
 
-    fun insertTodo(todo: Todo) = viewModelScope.launch(Dispatchers.IO){
-        repository.insert(todo)
-    }
 
-    fun updateTodo(todo: Todo) = viewModelScope.launch(Dispatchers.IO){
+
+    fun insertTodo(todo: Todo) = viewModelScope.launch(Dispatchers.IO) {
+        insertTodoUsecase.execute(todo)
+    }
+    fun updateTodo(todo: Todo) = viewModelScope.launch(Dispatchers.IO) {
         Log.d("Here for update", todo.toString())
-        repository.update(todo)
+        updateTodoUseCase.execute(todo)
     }
 
-    fun deleteTodo(todo: Todo) = viewModelScope.launch(Dispatchers.IO){
-        repository.delete(todo)
+    fun deleteTodo(todo: Todo) = viewModelScope.launch(Dispatchers.IO) {
+        deleteTodoUseCase.execute(todo)
     }
+
 }
 
 
@@ -42,6 +47,12 @@ class todoViewModel(application: Application,private val container: DBContainer)
 class StdVMFactory(val app: Application, val container: DBContainer): ViewModelProvider.Factory{
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return todoViewModel(app, container) as T
+        val db = container.getDatabase(app)
+        val repository = container.provideTodoRepository(db)
+        val getAllTodoUseCase = GetAllTodoUseCase(repository)
+        val updateTodoUseCase = UpdateTodoUseCase(repository)
+        val deleteTodoUseCase = DeleteTodoUseCase(repository)
+        val insertTodoUsecase = InsertTodoUsecase(repository)
+        return todoViewModel(getAllTodoUseCase, updateTodoUseCase, deleteTodoUseCase, insertTodoUsecase ) as T
     }
 }
